@@ -1,0 +1,446 @@
+import { getProductOptions, mapProduct } from "./json.js";
+
+// 1. Guardamos los elementos que vamos a usar varias veces.
+const formEl = document.getElementById("productForm");
+const mainEl = document.getElementById("productosContainer");
+const formErrorEl = document.getElementById("formError");
+const cancelButtonEl = document.getElementById("btnCancel");
+const productsFromJSON = await getProductOptions();
+const categorias = await fetch(`${API_URL}/categories`)
+    .then((response) => response.json())
+    .catch(() => []);
+
+// 2. Tomamos las opciones del archivo json.js para no repetirlas a mano en el HTML.
+
+//Sinonimos
+
+const sinonimosEspecies = {
+    "Perro": ["perro", "perro "],
+    "Gato": ["gato", "gato ", "gatos"],
+    "Perro y Gato": ["perro & gato", "perro y gato", "perro & gato "]
+};
+
+const sinonimosCategorias = {
+    "Alimentos": ["alimentos", "alimento", "alimento ", "alimento  "],
+    "Higiene": ["higiene", "higiene "],
+    "Accesorios": ["accesorios", "accesorio", "accesorio "],
+    "Juguetes": ["juguetes", "juguete"],
+    "Bienestar": ["bienestar", "bienestar "]
+};
+
+const sinonimosSubcategorias = {
+    "Alimento Seco": ["alimento seco", "seco", " seco ", "alimento  seco", "alimento especializado", "alimento  especializado", "croquetas", "alimento"],
+    "Suplementos": ["suplemento", "suplementos"],
+    "Premios": ["premio", "premios", "golosina", "golosinas", "snack", "snacks"],
+    "Alimento Húmedo": ["alimento húmedo", "alimento humedo", "húmedo", "humedo", "lata", "sobre"],
+    "Antiparasitarios": ["antiparasitario", "antiparasitarios", "antipulgas", "desparasitante", "pipeta"],
+    "Shampoo y Aseo": ["shampoo / limpieza", "shampoo y limpieza", "limpieza", "shampoo", "champú", "baño"],
+    "Higiene del Hogar": ["higiene/sanitario", "higiene y sanitario", "sanitario", "arenero", "desinfectante", "limpiador"],
+    "Camas y Descanso": ["camas y descanso", "cama y descanso", "cama", "colchón", "cojín"],
+    "Juguetes": ["caucho interactivo", "estimulación", "estimulacion", "juguete", "juguetes", "mordedor", "pelota"],
+    "Accesorios": ["correa", "correas", "collar", "collares", "bowls", "bowl", "plato", "platos", "comederos", "arnés", "arnes"],
+    "Bienestar": ["difusor ambiental", "difusor  ambiental", "feromonas", "calmante", "anti-estrés", "antiestrés"]
+};
+
+const sinonimosEtapaVida = {
+    "Todas las edades": ["todas las edades", "todas las etapas", "totas las etapas", "todas las edades ", "todas"],
+    "Cachorro": ["cachorro", "kitten", "6 meses +", "6 meses+", "cachorro ", "kitten "],
+    "Adulto": ["adulto", "adulto/cachorro", "adulto ", "adulto  "],
+    "Senior": ["senior", "senior ", "adulto mayor"],
+    "Adulto / Senior": ["adulto / senior", "adulto / senior (7+)", "adulto/senior"]
+};
+
+const sinonimosUnidades = {
+    "g": ["g", "gr", "gramo", "gramos"],
+    "kg": ["kg", "kilo", "kilos", "kilogramo", "kilogramos"],
+    "ml": ["ml", "mililitro", "mililitros"],
+    "pza": ["pza", "pzas", "pieza", "piezas", "unidad", "unidades"]
+};
+
+const sinonimosTamano = {
+    "Todas las razas": ["todas las razas", "todas", "todas las razas ", " todas las razas"],
+    "Pequeña": ["pequeña", "pequeñas", "razas pequeñas y mini", "pequeña "],
+    "Mediana": ["mediana", "raza mediana", "raza mediana "],
+    "Grande": ["grande", "razas grandes", "raza mediana / grande", "mediana / grande", "grande "]
+};
+
+//Funciones normalización
+
+const normalizarValor = (valor, sinonimos) => {
+    if (!valor) return valor;
+    const valorLower = String(valor).trim().toLocaleLowerCase("es-MX");
+
+    for (const [valorEstandar, variantes] of Object.entries(sinonimos)) {
+        if (variantes.some(v => valorLower === v.toLocaleLowerCase("es-MX"))) {
+            return valorEstandar;
+        }
+    }
+    return valor.trim();
+};
+
+const cleanOptions = (values, sinonimos = null) => {
+    const optionsWithoutDuplicates = new Map();
+
+    values.forEach((value) => {
+        let cleanValue = String(value ?? "").trim();
+
+        if (sinonimos) {
+            cleanValue = normalizarValor(cleanValue, sinonimos);
+        }
+
+        const comparisonValue = cleanValue.toLocaleLowerCase("es-MX");
+
+        if (cleanValue && !optionsWithoutDuplicates.has(comparisonValue)) {
+            optionsWithoutDuplicates.set(comparisonValue, cleanValue);
+        }
+    });
+
+    return [...optionsWithoutDuplicates.values()].sort((a, b) =>
+        a.localeCompare(b, "es-MX")
+    );
+};
+
+// SKU
+
+const dropdownFields = {
+    Especie: {
+        selectId: "Especie",
+        options: cleanOptions(["Perro", "Gato", "Perro & Gato"], sinonimosEspecies),
+        sinonimos: sinonimosEspecies
+    },
+    Categoria: {
+        selectId: "Categoria",
+        options: cleanOptions(categorias.map((categoria) => categoria.categoryName), sinonimosCategorias),
+        sinonimos: sinonimosCategorias
+    },
+    Subcategoria: {
+        selectId: "Subcategoria",
+        options: cleanOptions(productsFromJSON.map((product) => product.Subcategoria), sinonimosSubcategorias),
+        sinonimos: sinonimosSubcategorias
+    },
+    Etapa_Vida: {
+        selectId: "Etapa_Vida",
+        options: cleanOptions(productsFromJSON.map((product) => product.Etapa_Vida), sinonimosEtapaVida),
+        sinonimos: sinonimosEtapaVida
+    },
+    Tamano_Raza: {
+        selectId: "Tamano_Raza",
+        options: cleanOptions(productsFromJSON.map((product) => product.Tamano_Raza), sinonimosTamano),
+        sinonimos: sinonimosTamano
+    },
+    Peso_Unidad: {
+        selectId: "Peso_Unidad", // ✅ Corregido
+        options: cleanOptions([
+            ...productsFromJSON.map((product) => product.Peso_Unidad),
+            "pieza",
+            "piezas"
+        ], sinonimosUnidades),
+        sinonimos: sinonimosUnidades
+    }
+};
+
+//DATALISTS
+
+Object.values(dropdownFields).forEach(({ selectId, options }) => {
+    const selectEl = document.getElementById(selectId);
+
+    if (!selectEl) {
+        console.warn(`⚠️ No se encontró el elemento con ID: ${selectId}`);
+        return;
+    }
+
+    options.forEach((optionText) => {
+        const optionEl = document.createElement("option");
+        optionEl.value = optionText;
+        optionEl.textContent = optionText;
+        selectEl.appendChild(optionEl);
+    });
+});
+
+// 3. Dejamos pasar solamente números en precio, stock y peso.
+document.querySelectorAll(".campo-decimal").forEach((inputEl) => {
+    inputEl.dataset.previousValue = "";
+
+    inputEl.addEventListener("input", () => {
+        if (/^\d*(\.\d{0,2})?$/.test(inputEl.value)) {
+            inputEl.dataset.previousValue = inputEl.value;
+        } else {
+            inputEl.value = inputEl.dataset.previousValue;
+        }
+    });
+});
+
+document.querySelectorAll(".campo-entero").forEach((inputEl) => {
+    inputEl.dataset.previousValue = "";
+
+    inputEl.addEventListener("input", () => {
+        if (/^\d*$/.test(inputEl.value)) {
+            inputEl.dataset.previousValue = inputEl.value;
+        } else {
+            inputEl.value = inputEl.dataset.previousValue;
+        }
+    });
+});
+
+// 4. Revisamos que el valor escrito sí exista dentro de su dropdown.
+// const findOption = (value, options) => {
+//     const comparisonValue = value.trim().toLocaleLowerCase("es-MX");
+//     return options.find(
+//         (option) => option.toLocaleLowerCase("es-MX") === comparisonValue
+//     );
+// };
+
+// const validateDropdown = (fieldId) => {
+//     const inputEl = document.getElementById(fieldId);
+//     if (!inputEl) return;
+
+//     const validOption = findOption(inputEl.value, dropdownFields[fieldId].options);
+
+//     inputEl.setCustomValidity(validOption ? "" : "Selecciona una opción de la lista.");
+
+//     if (validOption) {
+//         inputEl.value = validOption;
+//     }
+// };
+
+// Object.keys(dropdownFields).forEach((fieldId) => {
+//     const inputEl = document.getElementById(fieldId);
+//     if (inputEl) {
+//         inputEl.addEventListener("input", () => validateDropdown(fieldId));
+//         inputEl.addEventListener("change", () => validateDropdown(fieldId));
+//     }
+// });
+// * Cambio a select 
+// * 4. Validamos que se haya seleccionado una opción válida.
+
+const validateDropdown = (fieldId) => {
+
+    const selectEl = document.getElementById(fieldId);
+
+    if (!selectEl) return;
+
+    const validOption = dropdownFields[fieldId].options.includes(selectEl.value);
+
+    selectEl.setCustomValidity(
+        validOption
+            ? ""
+            : "Selecciona una opción de la lista."
+    );
+};
+
+Object.keys(dropdownFields).forEach((fieldId) => {
+
+    const selectEl = document.getElementById(fieldId);
+
+    if (selectEl) {
+        selectEl.addEventListener("change", () => {
+            validateDropdown(fieldId);
+        });
+    }
+});
+
+// 5. Aplicamos los rangos de los campos numéricos y evitamos IDs repetidos.
+const validateNumbers = () => {
+    const priceEl = document.getElementById("Precio_Base");
+    const stockEl = document.getElementById("Stock");
+    const weightEl = document.getElementById("Peso_Valor");
+    const price = Number(priceEl.value);
+    const stock = Number(stockEl.value);
+    const weight = Number(weightEl.value);
+
+    priceEl.setCustomValidity(
+        priceEl.value !== "" && Number.isFinite(price) && price >= 0 ? "" : "Precio no válido."
+    );
+    stockEl.setCustomValidity(
+        stockEl.value !== "" && Number.isInteger(stock) && stock >= 0 ? "" : "Stock no válido."
+    );
+    weightEl.setCustomValidity(
+        weightEl.value !== "" && Number.isFinite(weight) && weight > 0 ? "" : "Peso no válido."
+    );
+};
+
+const validateProductSku = () => {
+    const skuEl = document.getElementById("sku");
+    const repeatedSku = productsFromJSON.some(
+        (card) => String(card.sku).toLocaleLowerCase("es-MX") ===
+            skuEl.value.trim().toLocaleLowerCase("es-MX")
+    );
+
+    skuEl.setCustomValidity(repeatedSku ? "Ya existe un producto con este SKU." : "");
+
+    const feedbackEl = skuEl.nextElementSibling;
+    feedbackEl.textContent = repeatedSku
+        ? "Ya existe un producto con este SKU."
+        : "Escribe un SKU usando letras, números, guion o guion bajo.";
+};
+
+const getNextProductId = () => {
+    const ids = productsFromJSON
+        .map((product) => Number(product.id))
+        .filter((id) => Number.isSafeInteger(id) && id >= 0);
+    return Math.max(0, ...ids) + 1;
+};
+
+const updateNextProductId = () => {
+    document.getElementById("id").value = getNextProductId();
+};
+
+updateNextProductId();
+
+document.getElementById("sku").addEventListener("input", validateProductSku);
+["Precio_Base", "Stock", "Peso_Valor"].forEach((fieldId) => {
+    document.getElementById(fieldId).addEventListener("input", validateNumbers);
+});
+
+// Quitamos la marca roja de una casilla tan pronto como ya tenga un valor válido.
+formEl.querySelectorAll("input, textarea, select").forEach((fieldEl) => {
+    fieldEl.addEventListener("input", () => {
+        if (fieldEl.checkValidity()) {
+            fieldEl.classList.remove("is-invalid");
+        }
+    });
+});
+
+// 6. Validamos todo antes de guardar. Si algo falla, marcamos cada casilla incorrecta.
+const obtenerMarca = async (nombre) => {
+    const marcas = await fetch(`${API_URL}/brands`).then((response) => response.json());
+    const existente = marcas.find(
+        (marca) => marca.brandName.toLocaleLowerCase("es-MX") === nombre.toLocaleLowerCase("es-MX")
+    );
+    if (existente) return existente;
+
+    const response = await fetch(`${API_URL}/brands`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ brandName: nombre })
+    });
+    return response.json();
+};
+
+formEl.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    formEl.querySelectorAll("input:not([type='hidden']), textarea").forEach((fieldEl) => {
+        fieldEl.value = fieldEl.value.trim();
+    });
+
+    Object.keys(dropdownFields).forEach(validateDropdown);
+    validateNumbers();
+    validateProductSku();
+
+    if (!formEl.checkValidity()) {
+        formEl.classList.add("was-validated");
+        formErrorEl.classList.remove("d-none");
+        formErrorEl.focus();
+        return;
+    }
+
+    formErrorEl.classList.add("d-none");
+    const categoria = categorias.find(
+        (item) => item.categoryName === document.getElementById("Categoria").value
+    );
+
+    try {
+        const marca = await obtenerMarca(document.getElementById("Marca").value);
+        const productRequest = {
+            sku: document.getElementById("sku").value,
+            title: document.getElementById("Nombre").value,
+            description: document.getElementById("Descripcion_Producto").value,
+            species: document.getElementById("Especie").value,
+            subcategory: document.getElementById("Subcategoria").value,
+            lifeStage: document.getElementById("Etapa_Vida").value,
+            breedSize: document.getElementById("Tamano_Raza").value,
+            price: Number(document.getElementById("Precio_Base").value),
+            stock: Number(document.getElementById("Stock").value),
+            weight: Number(document.getElementById("Peso_Valor").value),
+            unit: document.getElementById("Peso_Unidad").value,
+            prescription: document.getElementById("Requiere_Receta").value === "1",
+            urlImg: document.getElementById("Imagen_URL").value,
+            categoryId: categoria.id,
+            brandId: marca.brandId
+        };
+
+        const response = await fetch(`${API_URL}/products`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(productRequest)
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        productsFromJSON.push(mapProduct(await response.json()));
+    } catch (error) {
+        console.error("No fue posible guardar el producto.", error);
+        formErrorEl.classList.remove("d-none");
+        formErrorEl.focus();
+        return;
+    }
+
+    renderCards();
+    resetForm();
+
+    const modalElement = document.getElementById("successModal");
+    if (modalElement && typeof bootstrap !== "undefined") {
+        const bootstrapModal = bootstrap.Modal.getOrCreateInstance(modalElement);
+        bootstrapModal.show();
+    }
+});
+
+// 8. Limpiamos el formulario y sus mensajes sin borrar los productos guardados.
+function resetForm() {
+    formEl.reset();
+    formEl.classList.remove("was-validated");
+    formErrorEl.classList.add("d-none");
+    formEl.querySelectorAll("input, textarea, select").forEach((fieldEl) => {
+        fieldEl.classList.remove("is-invalid");
+        fieldEl.setCustomValidity("");
+
+        if (fieldEl.matches(".campo-decimal, .campo-entero")) {
+            fieldEl.dataset.previousValue = "";
+        }
+    });
+    updateNextProductId();
+}
+
+cancelButtonEl.addEventListener("click", resetForm);
+
+// 9. Mostramos una vista previa sencilla de lo que ya se registró.
+const escapeHTML = (value) => {
+    const temporaryEl = document.createElement("div");
+    temporaryEl.textContent = String(value ?? "");
+    return temporaryEl.innerHTML;
+};
+
+const renderCards = () => {
+    mainEl.innerHTML = "";
+    [...productsFromJSON].reverse().forEach((product) => addProductCard(product, mainEl));
+};
+
+const addProductCard = (product, htmlElement) => {
+    const productCard = `
+        <div class="col-md-12 mb-3">
+            <div class="card card-producto shadow-sm border">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <h5 class="card-title text-black">${escapeHTML(product.Nombre)}</h5>
+                        <span class="badge bg-secondary">ID ${escapeHTML(product.id)} | SKU ${escapeHTML(product.sku)}</span>
+                    </div>
+                    <h6 class="card-subtitle mb-2 text-muted">${escapeHTML(product.Marca)} | ${escapeHTML(product.Categoria)} &gt; ${escapeHTML(product.Subcategoria)}</h6>
+                    <p class="card-text small mb-1">${escapeHTML(product.Descripcion_Producto)}</p>
+                    <ul class="list-inline small text-muted mb-2">
+                        <li class="list-inline-item"><strong>Precio:</strong> $${escapeHTML(product.Precio_Base)}</li>
+                        <li class="list-inline-item"><strong>Stock:</strong> ${escapeHTML(product.Stock)}</li>
+                        <li class="list-inline-item"><strong>Peso:</strong> ${escapeHTML(product.Peso_Valor)} ${escapeHTML(product.Peso_Unidad)}</li>
+                        <li class="list-inline-item"><strong>Especie:</strong> ${escapeHTML(product.Especie)}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    `;
+
+    htmlElement.insertAdjacentHTML("beforeend", productCard);
+};
+
+renderCards();
+

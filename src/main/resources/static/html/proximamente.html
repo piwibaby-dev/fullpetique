@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boupetique</title>
+    <link rel="icon" type="image/png" href="../assets/logo-img/pinguino.png">
+
+    <!-- Iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Conexión de BootStrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+
+    <!-- Conexión a CSS -->
+    <link rel="stylesheet" href="../css/styles.css">
+     <!--estilos solo para dibujar svg perrito-->
+    <link rel="stylesheet" href="../css/stylesPerrito.css">
+
+
+</head>
+
+<body data-page="proximamente">
+    <header id="site-header">
+        <div data-include="../partials/navbar.html"></div>
+        <div class="techo-banner"></div>
+    </header>
+            <!--! botones para ir a pagina de registro de productos: TEMPORALES mientras se decide como y donde indexar -->
+            <main class="container-fluid px-4 py-4">
+                <!--  <div class="container-fluid px-4 py-4"> --> <!--? Descomentar si se quita la clase al main-->
+                <div class="mb-3">
+                    <div class="d-flex gap-2">
+                        <a href="./registro_prod.html" class="btn botones-productos ">
+                            Registro de productos
+                        </a>
+                    </div>
+                </div>
+                <!--</div> --> <!--? Descomentar si se quita la clase al main-->
+                <!--! FIN DE BOTONES: registro productos y productos-->
+
+
+    </section>
+     <!-- empieza sección de sub boupetique -->
+    <section id="precios" class="pricing-section py-5">
+            <div class="pricing-container">
+               
+                <article class="pricing-header">
+                    <div class="header-text">
+                        <h2>Planes y Precios</h2>
+                        <p>Elige la experiencia Boupetique que mejor se adapte a su día a día.</p>
+                    </div>
+
+                    <!-- boton mes o año-->
+                    <div class="switch-wrapper">
+    <div class="switch-pill" id="switchPill"></div>
+    <button type="button" class="switch-btn active" id="monthlyBtn">
+        Mensual
+    </button>
+    <button type="button" class="switch-btn" id="yearlyBtn">
+        Anual <span class="badge-save">Ahorra 20%</span>
+    </button>
+</div>
+                </article>
+
+     <!-- empieza Tarjetas de sub boupetique -->
+                <div class="plans-grid">
+                    <div class="card">
+                        <div>
+                            <div class="price-row">
+                                <span class="price-amount"><span class="price-val" free="1">Gratis</span></span>
+                            </div>
+                            <h3 class="plan-title">Plan Básico</h3>
+                            <p class="plan-desc">Perfecto para probar Boupetique y comprar lo esencial para tu mascota.</p>
+                            
+                            <div class="features-section">
+                                <h4 class="features-header">Incluye:</h4>
+                                <ul class="features-list">
+                                    <li>
+                                        <span class="check-icon">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg>
+                                        </span>
+                                        3 productos favoritos guardados
+                                    </li>
+                                    <li>
+                                        <span class="check-icon">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg>
+                                        </span>
+                                        Acceso a compra
+                                    </li>
+                                    <li>
+                                        <span class="check-icon">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg>
+                                        </span>
+                                        Recordatorios de compra personalizados
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <button type="button" class="plan-btn btn-dark" data-plan="Básico">Empezar gratis</button>
+                    </div>
+
+                  
+                    <div class="card">
+                        <div>
+                            <div class="price-row">
+                                <span class="price-amount">$<span class="price-val" data-monthly="300" data-yearly="3000">300</span></span>
+                                <span class="price-period">/mes</span>
+                            </div>
+                            <h3 class="plan-title">Plan Premium</h3>
+                            <p class="plan-desc">Ideal para dueños que quieren bienestar diario, alimentación y productos premium.</p>
+
+                            <div class="features-section">
+                                <h4 class="features-header">Todo lo de plan básico, más:</h4>
+                                <ul class="features-list">
+                                    <li>
+                                        <span class="check-icon">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg>
+                                        </span>
+                                        Envío gratis en pedidos mayores a $500
+                                    </li>
+                                    <li>
+                                        <span class="check-icon">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg>
+                                        </span>
+                                        Recomendaciones personalizadas por mascota
+                                    </li>
+                                    <li>
+                                        <span class="check-icon">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg>
+                                        </span>
+                                        Descuentos del 5% en marcas seleccionadas
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <button type="button" class="plan-btn btn-dark" data-plan="Premium">Elegir Premium</button>
+                    </div>
+
+                   
+                    <div class="card popular">
+                        <div>
+                            <span class="badge-popular">El más pedido</span>
+                            <div class="price-row">
+                                <span class="price-amount">$<span class="price-val" data-monthly="599" data-yearly="5990">599</span></span>
+                                <span class="price-period">/mes</span>
+                            </div>
+                            <h3 class="plan-title">Plan Pro</h3>
+                            <p class="plan-desc">La experiencia completa para tu mascota con atención personalizada y beneficios exclusivos.</p>
+
+                            <div class="features-section">
+                                <h4 class="features-header">Todo lo de plan básico, más:</h4>
+                                <ul class="features-list">
+                                    <li>
+                                        <span class="check-icon">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg>
+                                        </span>
+                                        Kit de bienvenida con acceso a promociones exclusivas
+                                    </li>
+                                    <li>
+                                        <span class="check-icon">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg>
+                                        </span>
+                                        Prioridad en pedidos y envíos express
+                                    </li>
+                                    <li>
+                                        <span class="check-icon">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg>
+                                        </span>
+                                        Descuentos del 10% en marcas seleccionadas
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <button type="button" class="plan-btn btn-light" data-plan="Pro">Elegir Pro</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+
+
+
+
+    <footer id="site-footer" class="text-light py-5" data-include="../partials/footer.html"></footer>
+
+    <!-- Script de Javascript -->
+    <script src="../js/app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../js/scriptPerrito.js"></script>
+    <!-- Script de BootStrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+    <!-- Script de Contador de Productos -->
+    <script type="module" src="../js/productos/counterProducts.js"></script>
+</body>
+
+</html>

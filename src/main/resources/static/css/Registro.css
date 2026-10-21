@@ -1,0 +1,101 @@
+
+#panelRegistro .form {
+
+  background: linear-gradient(to right, #324738, #324738);
+
+  color: #ffffff;
+
+}
+
+.registro-card {
+  border-radius: 1.5rem;
+}
+
+#panelRegistro .titleR {
+  font-weight: 600;
+  letter-spacing: -1px;
+  position: relative;
+  display: flex;
+
+  font-size: 30px;
+  font-weight: bold;
+}
+
+#panelRegistro .titleF {
+  font-size: 1rem;
+
+  font-weight: bold;
+
+  color: #ffffff;
+
+}
+
+/* Color de letra*/
+
+#panelRegistro #formulario .form-label {
+
+  color: #ffffff;
+
+}
+
+#panelRegistro #formulario .form-control,
+#panelRegistro #formulario .form-select {
+  background-color: var(--boupetique-gris-alabastro) ;
+  /* usar tono de boupetique */
+
+}
+
+
+#panelRegistro .form-control::placeholder {
+  color: var(--boupetique-olive-clear) ;
+}
+
+#panelRegistro #contador,
+#panelRegistro #repcontador {
+  color: #ffffff ;
+}
+
+#panelRegistro #terminosLink {
+  color: #f2c14e;
+}
+
+#panelRegistro #formulario button[type="reset"].btn-secondary:hover {
+  color: #dc3545;
+}
+
+#panelRegistro #formulario #btnEnviar.btn-success {
+  background: #d96b2777;
+  border-color: #d96b2777;
+  color: #ffffff;
+}
+
+#panelRegistro #formulario #btnEnviar.btn-success:hover {
+  background: #d96b27;
+  border-color: #d96b27;
+  color: #ffffff;
+}
+
+.auth-toggle-container button.toggle-btn {
+  border: 0;
+  background: transparent;
+}
+
+.auth-panel {
+  animation: authFade 0.25s ease;
+}
+
+.auth-panel[hidden] {
+  display: none !important;
+}
+
+@keyframes authFade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
