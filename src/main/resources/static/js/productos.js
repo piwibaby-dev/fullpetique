@@ -169,7 +169,7 @@ function addToCart(product) {
 
     //Muestro la alerta en pantalla
     Toast.fire({
-        iconHtml: '<img src="https://www.gifsanimados.org/data/media/218/pinguino-imagen-animada-0082.gif" style="width: 40px; height: 40px; border: none;" alt="pinguino" />',
+        iconHtml: '<img src="https://www.gifsanimados.org/data/media/209/gato-imagen-animada-0046.gif" style="width: 55px; height: 55px; border: none;" alt="pinguino" />',
         title: 'Producto agregado al carrito',
         customClass: {
             icon: 'border-0' // Quito los bordes circulares por defecto del icono de SweetAlert 
